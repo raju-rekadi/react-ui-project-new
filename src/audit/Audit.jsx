@@ -12,17 +12,10 @@ export { Audit };
 function Audit() {
   const dispatch = useDispatch();
 
-  const users = useSelector((x) => x.users.list);
-
-  useEffect(() => {
-    dispatch(userActions.getAll());
-  }, []);
-
   function dateConvert(cell, row) {
     const date = new Date(cell);
     const localDate = date.toLocaleString(); // Convert to local date and time string
-
-    return <span>{localDate}</span>;
+    return <span>{cell? localDate : null}</span>;
   }
 
   const columns = [
@@ -46,6 +39,12 @@ function Audit() {
     },
   ];
 
+  const users = useSelector((x) => x.users.list);
+
+  useEffect(() => {
+    dispatch(userActions.getAll());
+  }, []);
+
   return (
     <div>
       <h1>Auditor Page</h1>
@@ -55,7 +54,7 @@ function Audit() {
         hover
         condensed
         keyField="id"
-        data={users.value ? users.value : []}
+        data={users && users.value ? users.value : []}
         columns={columns}
         pagination={paginationFactory()}
       />
