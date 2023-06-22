@@ -1,47 +1,65 @@
-import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-
-import { userActions } from '_store';
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { TableComponent } from "./TableComponent";
+import BootstrapTable from "react-bootstrap-table-next";
+import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
+import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
+import paginationFactory from "react-bootstrap-table2-paginator";
+import { userActions } from "_store";
 
 export { Audit };
 
 function Audit() {
-    const users = useSelector(x => x.users.list);
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(userActions.getAll());
-    }, []);
+  const users = useSelector((x) => x.users.list);
 
-    return (
-        <div>
-            <h1>Auditor Page</h1>
-            <table className="table table-striped">
-                <thead>
-                    <tr>
-                        <th style={{ width: '30%' }}>First Name</th>
-                        <th style={{ width: '30%' }}>Last Name</th>
-                        <th style={{ width: '30%' }}>Username</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {users?.value?.map(user =>
-                        <tr key={user.id}>
-                            <td>{user.firstName}</td>
-                            <td>{user.lastName}</td>
-                            <td>{user.username}</td>
-                        </tr>
-                    )}
-                    {users?.loading &&
-                        <tr>
-                            <td colSpan="4" className="text-center">
-                                <span className="spinner-border spinner-border-lg align-center"></span>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    );
+  useEffect(() => {
+    dispatch(userActions.getAll());
+  }, []);
+
+  function dateConvert(cell, row) {
+    const date = new Date(cell);
+    const localDate = date.toLocaleString(); // Convert to local date and time string
+
+    return <span>{localDate}</span>;
+  }
+
+  const columns = [
+    {
+      dataField: "index",
+      text: "ID",
+      formatter: (cell, row, rowIndex) => {
+        return rowIndex + 1; // Add 1 to start the index from 1
+      },
+    },
+    { dataField: "firstName", text: "First Name" },
+    { dataField: "lastName", text: "Last Name" },
+    { dataField: "username", text: "User Name" },
+    { dataField: "role", text: "Role" },
+    { dataField: "lastLoginTime", text: "Last Login", formatter: dateConvert },
+    { dataField: "lastClientIP", text: "Last Client IP" },
+    {
+      dataField: "lastLogoutTime",
+      text: "Last Logout",
+      formatter: dateConvert,
+    },
+  ];
+
+  return (
+    <div>
+      <h1>Auditor Page</h1>
+
+      <BootstrapTable
+        striped
+        hover
+        condensed
+        keyField="id"
+        data={users.value ? users.value : []}
+        columns={columns}
+        pagination={paginationFactory()}
+      />
+    </div>
+  );
 }

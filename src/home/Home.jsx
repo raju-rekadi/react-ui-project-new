@@ -1,10 +1,17 @@
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useEffect } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { userActions } from '_store';
 
 export { Home };
 
 function Home() {
     const auth = useSelector(x => x.auth.value);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(userActions.getAll());
+    }, []);
     return (
         <div>
             <h1>Hi {auth?.firstName}!</h1>

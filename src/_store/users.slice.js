@@ -45,7 +45,7 @@ function createExtraActions() {
 
     function getAll() {
         return createAsyncThunk(
-            `${name}/getAll`,
+            `${name}/audit`,
             async () => await fetchWrapper.get(baseUrl)
         );
     }

@@ -67,14 +67,21 @@ function createExtraActions() {
         );
     }
 
-    function logout() {
+        function logout() {
         return createAsyncThunk(
             `${name}/logout`,
-            function (arg, { dispatch }) {
-                dispatch(authActions.setAuth(null));
-                localStorage.removeItem('auth');
-                history.navigate('/account/login');
+            async function ({ username }, { dispatch }) {
+                dispatch(alertActions.clear());
+                try {
+                    const user = await fetchWrapper.post(`${baseUrl}/logout`, { username });
+                    dispatch(authActions.setAuth(null));
+                    localStorage.removeItem('auth');
+                    history.navigate('/account/login');
+                } catch (error) {
+                    dispatch(alertActions.error(error));
+                }
             }
         );
     }
+
 }
